@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block navbar %}{% endblock navbar%}
+{% block container %}
+{% block navleft %}{% endblock %}
+	<h3>Los datos fueron cargados exitosamente</h3>
+		{% for formulario in formulario %}
+			<p>{{ formulario }}</p>
+		{% endfor %}
+{% endblock container %}

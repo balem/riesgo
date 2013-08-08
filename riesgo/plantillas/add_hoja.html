@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block navbar %}{% endblock navbar%}
+{% block navleft %}
+	<div class="span2 bs-docs-sidebar">
+		<ul class="nav nav-tabs nav-stacked">
+			{% for hoja in hojas%}
+				<li><a href=""><span style="font-weight: bold;">Identificador:</span> {{ hoja.id }}</a></li>
+				<li><a href=""><span style="font-weight: bold;">Descripción:</span> {{ hoja.descripcion }}</a></li>
+				<li><a href=""><span style="font-weight: bold;">Fecha de publicación:</span> {{ hoja.fecha_public }}</a></li>
+				<li><a href=""><span style="font-weight: bold;">Circuito:</span> {{ hoja.circuito }}</a></li>
+				<li><a href=""><span style="font-weight: bold;">Circunscripción:</span> {{ hoja.circunscripcion }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock navleft %}
+{% block container %}
+	<table class="table table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Variable</th>
+				<th>Indicador</th>
+				<th colspan="3">Opciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<form action="{{ encuesta_id }}" name="formvariables" method="POST">
+				{% csrf_token %}
+	{% for hoja in hojas%}
+		{% for variable in hoja.variables.all %}
+			<tr>
+				<td>{{ variable.id }}</td>
+				<td><span class='variable'>{{ variable.descripcion }}</span></td>
+				<td>{{variable.indicador}}</td>
+				<td>
+					<label>SI
+						<input type="radio" class="btn btn-success" name="{{ variable.id }}" value="{{ variable.valor |floatformat:-2 }}">
+					</label>
+				</td>
+				<td>
+					<label>
+						NO
+						<input type="radio" class="btn btn-danger" name="{{ variable.id }}" value="0.0" checked>
+					</label>
+				</td>
+				<td>
+					{% for variable_otro in variables.all %}
+						
+							{% if variable.id == variable_otro.variable_id and hoja.id == variable_otro.hoja_id 	%}
+								<span class=''>
+									<input type="text" style="width: 22px; margin-top:2px;" name="" readonly="readonly" value= "{{ variable_otro.valor }}">
+								</span>
+							{% endif %}
+					{% endfor %}
+				</td>
+			</tr>
+		{% endfor %}
+	{% endfor%}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="6">
+					<label style="align: right;">
+						Marque esta opción para guardar definitivamente <input type="checkbox" name="enviar-mark"><br />
+					</label>
+					<span style="align: right;">
+						<input type="submit" class="btn btn-primary" name="" value="Guardar">
+					</span>
+					&nbsp;
+					<span style="align: right;">
+						<input type="reset" class="btn" name="" value="Cancel">
+					</span>
+				</td>
+			</tr>
+		</tfoot>
+	</form>
+	</table>
+	<script type="text/javascript">
+		$("form").submit(function() {
+			$(this).find("input[name!=csrfmiddlewaretoken]:hidden").remove();
+		}
+	</script>
+{% endblock container %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+
+{% block container %}
+{% block navleft %}{% endblock %}
+	<h3>Los datos se procesaron exitosamente</h3>
+	{% for hoja in hoja %}
+		<p><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></p>
+	{% empty %}
+		<p style='color:red;'>Todavía no se registraron las Encuestas o no estan activas</p>
+	{% endfor %}
+{% endblock container %}

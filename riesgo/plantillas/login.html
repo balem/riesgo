@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block navbar %}{% endblock navbar%}
+{% block container %}
+{% block navleft %}{% endblock %}
+<form action='' method='POST'>
+	{% csrf_token %}
+	{{ mensaje }}
+	{{ form.as_p }}
+	<input type="submit" value="ingresar">
+</form>
+{% block %}

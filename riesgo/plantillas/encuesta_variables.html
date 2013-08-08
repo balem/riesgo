@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block navbar %}{% endblock navbar%}
+{% block container %}
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Descripción</th>
+			<th>Opciones</th>
+		</tr>
+	</thead>
+	<tbody>
+	<form action="" method="post">
+		{% for variable in variables %}
+		<tr>
+			<td>{{variable.id}}</td>
+			<td>{{variable.descripcion}} <span class="label">{{ variable.id}}</span></td>
+			<td>
+				<span class="btn-group" data-toggle="buttons-radio">
+					<input type="button" class="btn btn-success" name="{{ variable.id}}" value="SI">
+					<input type="button" class="btn btn-danger" name="{{ variable.id}}" value="NO">
+				</span>
+			</td>
+		</tr>
+		{% empty %}
+			<p style='color:red;'>Todavía no se seleccionaron las variables para esta encuesta</p>
+		{% endfor %}
+	
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="3" style="text-align: right;">
+					
+					<label id="final-consulta">
+						Marque esta opción para dar por finalizado el registro
+						<input name="final-consulta" type="checkbox" value="1">
+					</label>
+					
+					<input class="btn btn-primary" type="submit" value="Guardar">
+					<input class="btn btn-danger" type="reset" value="Cancelar">
+				</form>	
+			</td>
+		</tr>
+	</tfoot>
+</table>
+{% endblock container %}
