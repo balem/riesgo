@@ -16,5 +16,5 @@ class ResultadoForm(forms.ModelForm):
 		model = Resultado
 
 class LoginForm(forms.Form):
-	username = forms.CharField(widget=forms.TextInput())
-	password = forms.CharField(widget=forms.PasswordInput(render_value='false'))
+	username = forms.CharField(widget=forms.TextInput({ "placeholder": "Usuario"}))
+	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Clave'}))

@@ -6,13 +6,16 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.forms import ModelForm
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import MySQLdb
 
+@login_required(login_url='/login')
 def mostrar_encuestas(request):
 	hoja = HojaControl.objects.all()
 	return render_to_response('mostrar_encuestas.html', {'hoja':hoja}, context_instance=RequestContext(request) )
 
+@login_required(login_url='/login')
 def add_hoja(request, encuesta_id):
 	hojas = HojaControl.objects.filter(id=encuesta_id)
 	variables = Resultado.objects.filter(hoja_id=encuesta_id)
@@ -29,14 +32,15 @@ def add_hoja(request, encuesta_id):
 	ctx = {'hojas': hojas, 'variables':variables, 'formulario': formulario}
 	return render_to_response('add_hoja.html', ctx, context_instance=RequestContext(request))
 
+@login_required(login_url='/login')
 def resultado_update(hoja_id, variable_id, valor):
 	resultados = Resultado.objects.get(hoja = hoja_id, variable = variable_id)
 	resultados.valor = valor
 	resultados.save()
 
-def login(request):
+def ingresar(request):
 	mensaje = ""
-	if request.user.is_autenticated():
+	if request.user.is_authenticated():
 		return HttpResponseRedirect('/')
 	else: 
 		if request.method == 'POST':
@@ -44,15 +48,16 @@ def login(request):
 			if form.is_valid():
 				username = form.cleaned_data['username']
 				password = form.cleaned_data['password']
-				usuario = autenticated(username = username, password = password)
+				usuario = authenticate(username = username, password = password)
 				if usuario is not None and usuario.is_active:
 					login(request, usuario)
 					return HttpResponseRedirect('/')
 				else:
-					mensaje = 'usuario y/o password incorrecto'
+					mensaje = 'usuario y/o clave incorrecto'
 		form = LoginForm()
 		ctx = {'form': form, 'mensaje': mensaje}
 		return render_to_response('login.html', ctx, context_instance=RequestContext(request))
-def logout(request):
+
+def salir(request):
 	logout(request)
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/login')

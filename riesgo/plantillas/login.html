@@ -1,12 +1,74 @@
-{% extends 'base.html' %}
-{% block titulo%}Gestión de Riesgos{% endblock titulo%}
-{% block navbar %}{% endblock navbar%}
-{% block container %}
-{% block navleft %}{% endblock %}
-<form action='' method='POST'>
-	{% csrf_token %}
-	{{ mensaje }}
-	{{ form.as_p }}
-	<input type="submit" value="ingresar">
-</form>
-{% block %}
+<!DOCTYPE html>
+<html lan="es">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Login</title>
+	<meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href='{{ STATIC_URL }}css/bootstrap.min.css'>
+    <link rel="stylesheet" href='{{ STATIC_URL }}css/bootstrap-responsive.min.css'>
+    <link rel="stylesheet" href='{{ STATIC_URL }}css/main.css'>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
+    <script src='{{ STATIC_URL }}js/vendor/modernizr-2.6.2-respond-1.1.0.min.js'></script>
+    <script src='{{ STATIC_URL }}js/vendor/jquery-1.9.1.min.js'></script>
+	<style type="text/css">
+      /* Override some defaults */
+      html, body {
+        background-color: #eee;
+      }
+      body {
+        padding-top: 40px; 
+      }
+      .container {
+        width: 300px;
+      }
+
+      /* The white background content wrapper */
+      .container > .content {
+        background-color: #fff;
+        padding: 20px;
+        margin: 0 -20px; 
+        -webkit-border-radius: 10px 10px 10px 10px;
+           -moz-border-radius: 10px 10px 10px 10px;
+                border-radius: 10px 10px 10px 10px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+                box-shadow: 0 1px 2px rgba(0,0,0,.15);
+      }
+
+	  .login-form {
+		margin-left: 65px;
+	  }
+	
+	  legend {
+		margin-right: -50px;
+		font-weight: bold;
+	  	color: #404040;
+	  }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="content">
+      <div class="row">
+        <div class="login-form">
+          <h2>Iniciar sessión</h2>
+			<form action='' method='POST'>
+				{% csrf_token %}
+				{{ mensaje }}
+				<fieldset>
+					<div class="clearfix">
+						{{ form.username }}
+					</div>
+					<div class="clearfix">
+						{{ form.password }}
+					</div>
+					<input class="btn btn-primary" type="submit" value="ingresar">
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>
