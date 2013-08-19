@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 import ho.pisa as pisa
 import cStringIO as StringIO
-import cgi
+import cgi, re
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
 
@@ -34,25 +34,35 @@ def ver_hoja(request, encuesta_id):
 def add_hoja(request, encuesta_id):
 	hojas = HojaControl.objects.filter(id=encuesta_id)
 	variables = Resultado.objects.filter(hoja_id=encuesta_id)
+	observacion = {}
 	if request.method == 'POST':
 		formulario = []
 		for key in request.POST.iterkeys():
 			valuelist = request.POST.getlist(key)
+			valuelist.sort()
 			formulario.extend(['%s=%s' % (key, val) for val in valuelist])
-			if key != 'csrfmiddlewaretoken' and key != 'enviar-mark' and val != 0 and val and 'null':
+			if re.match("[0-9999]+observacion", key) and key != 'csrfmiddlewaretoken':
+				a = key.split('observacion')
+				resultados_observacion(encuesta_id, a[0], val)
+			elif key != 'csrfmiddlewaretoken' and key != 'enviar-mark':
 				resultado_update(encuesta_id, key, val)
 			if key == 'enviar-mark' and val == 'on':
 				desactivar_hoja(request, encuesta_id)
-		return render_to_response('datos.html', { 'formulario': formulario}, context_instance=RequestContext(request))
+		return render_to_response('datos.html', { 'formulario': formulario, 'observacion':observacion}, context_instance=RequestContext(request))
 	else:
 		formulario = ResultadoForm()
 	ctx = {'hojas': hojas, 'variables':variables, 'formulario': formulario}
 	return render_to_response('add_hoja.html', ctx, context_instance=RequestContext(request))
 
-def resultado_update(hoja_id, variable_id, valor):
-	resultados = Resultado.objects.get(hoja = hoja_id, variable = variable_id)
-	resultados.valor = valor
-	resultados.save()
+def resultado_update(hoja_id, variable, valores):
+		resultados = Resultado.objects.get(hoja = hoja_id, variable = variable)
+		resultados.valor = valores
+		resultados.save()
+
+def resultados_observacion(hoja_id, variable, observacion):
+		resultados = Resultado.objects.get(hoja = hoja_id, variable = variable)
+		resultados.observacion = observacion
+		resultados.save()
 
 def ingresar(request):
 	mensaje = ""

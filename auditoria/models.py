@@ -7,6 +7,7 @@
 # Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
 # into your database.
 from __future__ import unicode_literals
+from django.contrib.auth.models import User
 
 from django.db import models
 
@@ -51,7 +52,13 @@ class Variable(models.Model):
     indicador = models.ForeignKey(Indicador, db_column='indicador')
     def __unicode__(self):
         return self.descripcion
-        
+
+class Identificador(models.Model):
+    """Esta entidad permitira asociar varias hojas de control"""
+    descripcion = models.CharField(max_length=255L, unique=True)
+    def __unicode__(self):
+        return self.descripcion
+
 ACTIVOS_CHOICES=(
     ('activo', 'Activo'),
     ('inactivo', 'Inactivo'),
@@ -59,12 +66,14 @@ ACTIVOS_CHOICES=(
 
 class HojaControl(models.Model):
     """Hoja de control"""
+    identificador = models.ForeignKey(Identificador, db_column='identificador')
     descripcion = models.CharField(max_length=255L)
     fecha_public = models.DateField()
     activa = models.CharField(max_length=10, choices=ACTIVOS_CHOICES)
     circuito = models.ForeignKey(Circuito, db_column='circuito')
     circunscripcion = models.ForeignKey(Circunscripcion, db_column='circunscripcion')
     area = models.ForeignKey(Area, db_column='area')
+    usuario = models.ForeignKey(User, db_column='usuario')
     #variables = models.ManyToManyField(Variables, through='EncuestasVariables')
     variables = models.ManyToManyField(Variable, verbose_name='Variables', related_name='hoja_variable')
     def __unicode__(self):
@@ -75,11 +84,4 @@ class Resultado(models.Model):
     hoja = models.ForeignKey(HojaControl)
     variable = models.ForeignKey(Variable)
     valor = models.FloatField()
-    #def __unicode__(self):
-    #    return self.hoja
-            
-#                  
-#class EncuestasVariables(models.Model):
-#    encuestas_id = models.ForeignKey(Encuestas, db_column='encuestas_id')
-#    variables_id = models.ForeignKey(Variables, db_column='variables_id')
-#    valor = models.FloatField()
+    observacion = models.TextField()

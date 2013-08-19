@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+<script type="text/javascript" src=""></script>
 {% block titulo%}Gestión de Riesgos{% endblock titulo%}
 {% block navbar %}{% endblock navbar%}
 {% block navleft %}
@@ -32,17 +33,22 @@
 		{% for variable in hoja.variables.all %}
 			<tr>
 				<td>{{ variable.id }}</td>
-				<td><span class='variable'>{{ variable.descripcion }}</span></td>
+				<td>
+					<span class='variable'>{{ variable.descripcion }}</span><br>
+					<span class='observacion'>
+						<input id='{{ variable.id }}observacion' name='{{ variable.id }}observacion' type='text'>
+					</span>
+				</td>
 				<td>{{variable.indicador}}</td>
 				<td>
 					<label>SI
-						<input type="radio" class="btn btn-success" name="{{ variable.id }}" value="{{ variable.valor |floatformat:-2 }}">
+						<input type="radio" id="si{{ variable.id }}" name="{{ variable.id }}" value="{{ variable.valor |floatformat:-2 }}" class="si">
 					</label>
 				</td>
 				<td>
 					<label>
 						NO
-						<input type="radio" class="btn btn-danger" name="{{ variable.id }}" value="0.0" checked>
+						<input type="radio" id="no{{ variable.id }}" name="{{ variable.id }}" class="no" value="0.0" checked>
 					</label>
 				</td>
 				<td>
@@ -51,7 +57,22 @@
 							{% if variable.id == variable_otro.variable_id and hoja.id == variable_otro.hoja_id 	%}
 								<span class=''>
 									<input type="text" style="width: 22px; margin-top:2px;" name="" readonly="readonly" value= "{{ variable_otro.valor }}">
+
 								</span>
+								<script type="text/javascript">
+								$(document).on('ready', function() {
+									if('{{ variable_otro.observacion }}' != 'None'){
+										$('#{{ variable_otro.variable_id }}observacion').val('{{ variable_otro.observacion }}');
+									}
+
+									if('{{ variable_otro.valor }}' != '0,0'){
+										$('#si{{ variable_otro.variable_id }}').attr('checked', true);
+									}else{
+										$('#no{{ variable_otro.variable_id }}').attr('checked', true);
+									}
+									console.log('add observacion {{ variable_otro.observacion }}');
+								});
+								</script>
 							{% endif %}
 					{% endfor %}
 				</td>
@@ -78,8 +99,14 @@
 	</form>
 	</table>
 	<script type="text/javascript">
-		$("form").submit(function() {
-			$(this).find("input[name!=csrfmiddlewaretoken]:hidden").remove();
-		}
-	</script>
+		$(document).on('ready', function() {
+			$('.si').click(function() {
+				$(this).attr('checked', true);
+				console.log('si: '+$(this).attr('value'));
+				console.log('si: '+$(this).attr('checked'));
+			});
+
+			
+		});
+		</script>
 {% endblock container %}

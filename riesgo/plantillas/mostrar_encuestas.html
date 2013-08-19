@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block titulo%}Gestión de Riesgos{% endblock titulo%}
-
+<script src='{{ STATIC_URL }}js/check.js'></script>
 {% block container %}
 
 	<h3>Hojas de Control activas</h3>
@@ -13,20 +13,30 @@
 				<th>Circunscripción</th>
 				<th>Área</th>
 				<th>Fecha de publición</th>
+				<th>Usuario</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for hoja in hoja %}
-			<tr>
-				<td>{{ hoja.id }}</td>
-				<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
-				<td>{{ hoja.circuito }}</td>
-				<td>{{ hoja.circunscripcion }}</td>
-				<td>{{ hoja.area }}</td>
-				<td>{{ hoja.fecha_public }}</td>
-			</tr>
+			{% for hoja in hoja%}
+				{% if hoja.usuario == username or username == admin %}
+				<tr>
+					<td>{{ hoja.id }}</td>
+					<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
+					<td>{{ hoja.circuito }}</td>
+					<td>{{ hoja.circunscripcion }}</td>
+					<td>{{ hoja.area }}</td>
+					<td>{{ hoja.fecha_public }}</td>
+					<td>{{ hoja.usuario }}</td>
+				</tr>
+				{% else %}
+					<tr>
+						<td colspan="7" style='color:red;'>
+							Todavía no se registraron las Encuestas o no estan activas
+						</td>
+					</tr>
+				{% endif %}
 			{% empty %}
-				<td colspan="6" style='color:red;'>Todavía no se registraron las Encuestas o no estan activas</td>
+				<td colspan="7" style='color:red;'>Todavía no se registraron las Encuestas o no estan activas</td>
 			{% endfor %}
 		</tbody>
 	</table>
