@@ -7,9 +7,10 @@ from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from django.db import connection
 import ho.pisa as pisa
 import cStringIO as StringIO
-import cgi, re
+import cgi, re, MySQLdb
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
 
@@ -113,9 +114,31 @@ def base(request):
 	return render_to_response('base.html', ctx, context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
-def ver_hoja_pdf(request, encuesta_id):
-	hojas = get_object_or_404(HojaControl, id=encuesta_id)
-	variables = Resultado.objects.filter(hoja_id=encuesta_id)
-	ctx = {'hojas': hojas, 'variables':variables }
-	html = render_to_response('hoja_informe.html', ctx, context_instance=RequestContext(request))
+def ver_hoja_pdf(request, id):
+	hojas = get_object_or_404(HojaControl, id=id)
+	variables = Resultado.objects.filter(hoja_id=id)
+	#con = connection.cursor()
+	#con.execute('SELECT sum(valor) as suma FROM auditoria_resultado where hoja_id ='+id)
+	#resultado = con.fetchone()
+	obt = total_variable(id)
+	resultado = {}
+	resultado = total_variable(id)
+	ctx = {'hojas': hojas, 'variables':variables, 'pagesize':'A4', 'resultado':resultado }
+	html = render_to_string('hoja_pdf.html', ctx, context_instance=RequestContext(request))
 	return generar_pdf(html)
+
+def total_variable(hoja_id):
+	res = {}
+	sql = 'SELECT sum(valor) FROM auditoria_resultado where hoja_id ='+hoja_id
+	con = connection.cursor()
+	con.execute(sql)
+	res['puntos_otenidos'] = con.fetchone()
+	sql = 'SELECT sum(valor) as suma FROM  auditoria_variable a inner join auditoria_hojacontrol_variables hj on hj.variable_id = a.id and hj.hojacontrol_id ='+hoja_id
+	con = connection.cursor()
+	con.execute(sql)
+	res['puntos_totales'] = con.fetchone()
+	sql = 'SELECT ((SELECT sum(valor) FROM auditoria_resultado where hoja_id =1)*100/sum(valor)) as porcentaje FROM 	auditoria_variable a inner join auditoria_hojacontrol_variables hj on hj.variable_id = a.id and hj.hojacontrol_id ='+hoja_id
+	con = connection.cursor()
+	con.execute(sql)
+	res['porcentje'] = con.fetchone()
+	return res

@@ -49,7 +49,10 @@
 		<tfoot>
 			<tr>
 				<td colspan="6">
-					<span><a href="/imprimir/informe/3">Imprimir</a></span>
+					{% for hoja in hojas%}
+						<span><a href="/imprimir/informe/{{hoja.id}}" target="_blank"><i class="icon-print"></i> Imprimir</a></span>
+					{% endfor %}
+						<span><a href="/"><i class="icon-home"></i> Ir al Inicio</a></span>
 				</td>
 			</tr>
 		</tfoot>
