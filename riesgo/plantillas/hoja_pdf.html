@@ -3,128 +3,85 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href='http://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>
-	<style type="text/css">
-		body{
-			font-family: serif;
-			font-size: 10pt;
-		}
-
-		.table tr{
-		}
-
-		.table tr td{
-			vertical-align: middle;
-			padding: 5px;
-			text-align: left;
-			border-top: 1px;
-			border-left: 1px;
-			border-bottom: 0px;
-			border-left: 0px;
-			border-style: solid;
-			border-color: gray;
-
-		}
-
-		.table tr td.variable{
-			text-align: justify;
-		}
-
-		table tr td.id{
-			text-align: center;
-			border-left: 1px solid gray;
-		}
-
-		.table tr td.valor{
-			text-align: right;
-		}
-
-		th{
-			vertical-align: middle;
-			padding: 5px;
-		}
-
-		table tfoot td.tfoot{
-			border-left: 1px solid gray;
-			border-bottom: 1px solid gray
-		}
-
-		div.firma{
-			text-align: right;
-			border-color: black;
-			border-top: 1px;
-		}
-
-		div.logo{
-			float: right;
-			text-align: right;
-		}
-	</style>
+    <link rel="stylesheet" type="text/css" href="http://192.168.1.180:8000/static/css/hoja-informe.css">
 </head>    
 <body>
-	<div class="titulo">
-		<h1>Hoja de control</h1>
-	</div>
-    <p>
-    	<strong>Descripcion: </strong>{{ hojas.descripcion }}
-    </p>
-    <p>
-    	<strong>Fecha de publicación: </strong>{{ hojas.fecha_public}}
-    </p>
-    <p>
-    	<strong>Circuito: </strong>{{ hojas.circuito}}
-    </p>
-    <p>
-    	<strong>Circunscripción: </strong>{{ hojas.circunscripcion}}
-    </p>
-    </p>
-    <p>
-    	<strong>Área: </strong>{{ hojas.area}}
-    </p>
-    <table class="table table-bordered table-hover">
-    	<thead>
-    		<tr>
-    			<th style="width:8%">#</th>
-    			<th>variable</th>
-    			<th>Observación</th>
-    			<th style="width:8%">valor</th>
-    		</tr>
-    	</thead>
-    	<tbody>
-    		{% for variable in variables %}
-    		<tr>
-    			<td class="id">{{ variable.variable_id }}</td>
-    			<td class="variable">{{ variable.variable }}</td>
-    			<td class="observacion">{{ variable.observacion }}</td>
-    			<td class="valor">{{ variable.valor }}</td>
-    		</tr>
-    		{% endfor %}
-    	</tbody>
-    	<tfoot>
-    		<tr>
-    			<td class="tfoot" colspan="4">
-    				<p><strong>Puntos Obtenidos: </strong>{{ resultado.puntos_otenidos }}</p>
-    			</td>
-    		</tr>
-    		<tr>
-    			<td class="tfoot" colspan="4">
-    				<p><strong>Total de puntos: </strong>{{ resultado.puntos_totales }}</p>
-    			</td>
-    		</tr>
-    		<tr>
-    			<td class="tfoot" colspan="4">
-    				<p><strong>Porcentaje: </strong>{{ resultado.porcentje }}</p>
-    			</td>
-    		</tr>
-    	</tfoot>
-    </table>
-    <div class="firma">
+    <header id="headerContent">
+        <h1 style="text-transform: uppercase; font-family: 'Book Antiqua'; tex">
+            REPÚBLICA DEL PARAGUAY<br>
+            CORTE SUPREMA DE JUSTICIA<br>
+            Dirección de Contraloría Interna<br>
+        </h1>
+        <h2>
+            Deparamente de control de la Gestión Administrativa
+        </h2>
+        
+    </header>
+    <section>
+        <p>
+        	<strong>Descripcion: </strong>{{ hojas.descripcion }}
+        </p>
+        <p>
+        	<strong>Fecha de publicación: </strong>{{ hojas.fecha_public}}
+        </p>
+        <p>
+        	<strong>Circuito: </strong>{{ hojas.circuito}}
+        </p>
+        <p>
+        	<strong>Circunscripción: </strong>{{ hojas.circunscripcion}}
+        </p>
+        </p>
+        <p>
+        	<strong>Área: </strong>{{ hojas.area}}
+        </p>
+        <table class="table table-bordered table-hover" style="padding: 2em;">
+        	<thead>
+        		<tr>
+        			<th style="width:8%">#</th>
+        			<th>variable</th>
+        			<th>Observación</th>
+        			<th style="width:8%">valor</th>
+        		</tr>
+        	</thead>
+        	<tbody>
+        		{% for variable in variables %}
+        		<tr>
+        			<td class="id">{{ variable.variable_id }}</td>
+        			<td class="variable">{{ variable.variable }}</td>
+        			<td class="observacion">{{ variable.observacion }}</td>
+        			<td class="valor">{{ variable.valor }}</td>
+        		</tr>
+        		{% endfor %}
+        	</tbody>
+        	<tfoot>
+        		<tr>
+        			<td class="tfoot" colspan="4">
+        				<p><strong>Puntos Obtenidos: </strong>{{ resultado.puntos_otenidos }}</p>
+        			</td>
+        		</tr>
+        		<tr>
+        			<td class="tfoot" colspan="4">
+        				<p><strong>Total de puntos: </strong>{{ resultado.puntos_totales }}</p>
+        			</td>
+        		</tr>
+        		<tr>
+        			<td class="tfoot" colspan="4">
+        				<p><strong>Porcentaje: </strong>{{ resultado.porcentje }}</p>
+        			</td>
+        		</tr>
+        	</tfoot>
+        </table>
+        <div class="firma">
 
-    	<br><br><br><br>
-    	<span >
-    		{{ hojas.usuario.first_name }} {{ hojas.usuario.last_name }}
-    	</span>
-    	<pdf:pagenumber>
-    </div>
+        	<br><br><br><br>
+        	<span >
+        		{{ hojas.usuario.first_name }} {{ hojas.usuario.last_name }}
+        	</span>
+        </div>
 
+        </section>
+        <div id="footerContent" style="border: 1px solid gray;">
+               Pie de página <pdf:pagenumber>
+        </div>
 </body>
 </html>

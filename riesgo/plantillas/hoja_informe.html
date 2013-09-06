@@ -29,7 +29,7 @@
 	{% for hoja in hojas%}
 		{% for variable in hoja.variables.all %}
 			<tr>
-				<td>{{ variable.id }}</td>
+				<td> {{ variable.id }} </td>
 				<td><span class='variable'>{{ variable.descripcion }}</span></td>
 				<td>{{variable.indicador}}</td>
 				<td>

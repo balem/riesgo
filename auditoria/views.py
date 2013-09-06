@@ -117,9 +117,6 @@ def base(request):
 def ver_hoja_pdf(request, id):
 	hojas = get_object_or_404(HojaControl, id=id)
 	variables = Resultado.objects.filter(hoja_id=id)
-	#con = connection.cursor()
-	#con.execute('SELECT sum(valor) as suma FROM auditoria_resultado where hoja_id ='+id)
-	#resultado = con.fetchone()
 	obt = total_variable(id)
 	resultado = {}
 	resultado = total_variable(id)

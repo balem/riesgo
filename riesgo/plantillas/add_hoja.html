@@ -31,7 +31,7 @@
 				{% csrf_token %}
 	{% for hoja in hojas%}
 		{% for variable in hoja.variables.all %}
-			<tr>
+			<tr class="{{ variable.id }}">
 				<td>{{ variable.id }}</td>
 				<td>
 					<span class='variable'>{{ variable.descripcion }}</span><br>
@@ -42,13 +42,13 @@
 				<td>{{variable.indicador}}</td>
 				<td>
 					<label>SI
-						<input type="radio" id="si{{ variable.id }}" name="{{ variable.id }}" value="{{ variable.valor |floatformat:-2 }}" class="si">
+						<input type="radio" id="si{{ variable.id }}" name="{{ variable.id }}" value="0.0" checked class="si">
 					</label>
 				</td>
 				<td>
 					<label>
 						NO
-						<input type="radio" id="no{{ variable.id }}" name="{{ variable.id }}" class="no" value="0.0" checked>
+						<input type="radio" id="no{{ variable.id }}" name="{{ variable.id }}" class="no"value="{{ variable.valor |floatformat:-2 }}">
 					</label>
 				</td>
 				<td>
@@ -66,9 +66,10 @@
 									}
 
 									if('{{ variable_otro.valor }}' != '0,0'){
-										$('#si{{ variable_otro.variable_id }}').attr('checked', true);
-									}else{
 										$('#no{{ variable_otro.variable_id }}').attr('checked', true);
+										$('tr.{{variable_otro.variable_id}}').css('color', '#990000');
+									}else{
+										$('#si{{ variable_otro.variable_id }}').attr('checked', true);
 									}
 									console.log('add observacion {{ variable_otro.observacion }}');
 								});

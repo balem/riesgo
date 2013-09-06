@@ -1,0 +1,81 @@
+ @page {
+      margin: 1cm;
+      margin-bottom: 2.5cm;
+      @frame footer {
+        -pdf-frame-content: footerContent;
+        bottom: 2cm;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        height: 1cm;
+        border: 1px solid gray;
+      }
+
+      @frame header {
+        -pdf-frame-content: headerContent;
+        top: 2cm;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        height: 1cm;
+        border: 1px solid gray;
+      }
+    }
+
+ body{
+			font-family: serif;
+			font-size: 10pt;
+		}
+
+		.table tr{
+		}
+
+		.table tr td{
+			vertical-align: middle;
+			padding: 5px;
+			text-align: left;
+			border-top: 1px;
+			border-left: 1px;
+			border-bottom: 0px;
+			border-left: 0px;
+			border-style: solid;
+			border-color: gray;
+
+		}
+
+		.table tr td.variable{
+			text-align: justify;
+		}
+
+		table tr td.id{
+			text-align: center;
+			border-left: 1px solid gray;
+		}
+
+		.table tr td.valor{
+			text-align: right;
+		}
+
+		th{
+			vertical-align: middle;
+			padding: 5px;
+		}
+
+		table tfoot td.tfoot{
+			border-left: 1px solid gray;
+			border-bottom: 1px solid gray
+		}
+
+		div.firma{
+			text-align: right;
+			border-color: black;
+			border-top: 1px;
+		}
+
+		div.logo{
+			float: right;
+			text-align: right;
+		}
+h1{
+	text-transform: uppercase;
+	font-style: italic;
+	text-align: center;
+}
