@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block container %}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<link rel="stylesheet" href="/static/css/datepicker.css">
+<style>
+	.errorlist{
+		background: #D9EDF7;
+	}
+
+  div.span9 ul li{
+      list-style: none;
+    }
+</style>
+<h1>Añadir Hoja de control</h1>
+<p>A continuación rellene los campos para crear una hoja de control nueva</p>
+<form id='formulario' method='POST' action=''>
+	{% csrf_token %}
+	{{ formulario }}
+	<p><input type="submit" class="btn btn-primary" value="confirmar"></p>
+</form>
+<script>
+	$('#id_fecha_public').datepicker({format: 'dd/mm/yyyy'});
+	$(document).on("ready", function() {
+		$('#id_usuario').css('display', 'none');
+		$('#id_usuario').prev('label').css('display', 'none');
+		$('#id_activa').css('display', 'none');
+		$('#id_activa').prev('label').css('display', 'none');
+		$("#id_usuario option").each(function(){
+   			if($(this).text() == '{{ user.username }}'){
+   				$(this).attr("selected", "selected");
+
+   			}else{
+   				$(this).removeAttr("selected");
+   			}
+		});
+
+		$("#id_activa option").each(function(){
+   			if($(this).text() == 'Activo'){
+   				$(this).attr("selected", "selected");
+
+   			}else{
+   				$(this).removeAttr("selected");
+   			}
+		});
+	});
+</script>
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+    $('#provincia').change(function(event){
+        $.post("/recarga_ciudades", {provincia_id:$('#provinvia').val()}, function(data){
+            var options = '<option value="">Selecciona una ciudad</option>';
+            for (var i = 0; i < data.length; i++){
+                options += '<option value="'+data[i]["pk"]+'">' +data[i]["fields"]["nombre"] +'</option>'
+            }
+            $('#ciudades').html(options)
+            $("#ciudades option:first").attr('selected', 'selected');
+        }, "json");
+    });
+});
+ 
+$(document).ajaxStart(function(){
+    $('#spinner').show();
+}).ajaxStop(function(){
+    $('#spinner').hide();
+});
+
+$(document).on('ready', function() {
+  $('.helptext').css('display', 'none');
+
+});
+
+</script>
+{% endblock container %}

@@ -3,11 +3,12 @@
       margin-bottom: 2.5cm;
       @frame footer {
         -pdf-frame-content: footerContent;
-        bottom: 2cm;
+        bottom: 0.1cm;
         margin-left: 1cm;
         margin-right: 1cm;
         height: 1cm;
-        border: 1px solid gray;
+        text-align: right;
+        border: 0px solid black;
       }
 
       @frame header {
@@ -16,66 +17,81 @@
         margin-left: 1cm;
         margin-right: 1cm;
         height: 1cm;
-        border: 1px solid gray;
+        border: 1px solid black;
       }
     }
 
- body{
-			font-family: serif;
-			font-size: 10pt;
-		}
+body{
+	font-family: serif;
+	font-size: 10pt;
+}
 
-		.table tr{
-		}
+.table tr th{
+	border-bottom: 1px solid black;
+}
 
-		.table tr td{
-			vertical-align: middle;
-			padding: 5px;
-			text-align: left;
-			border-top: 1px;
-			border-left: 1px;
-			border-bottom: 0px;
-			border-left: 0px;
-			border-style: solid;
-			border-color: gray;
+.table tr td{
+	vertical-align: middle;
+	padding: 5px;
+	text-align: left;
+	border-top: 0px;
+	border-bottom: 1px;
+	border-right: 0px;
+	border-style: solid;
+	border-color: black;
+}
 
-		}
+.table tr td.variable{
+	text-align: justify;
+}
 
-		.table tr td.variable{
-			text-align: justify;
-		}
+table tr td.id{
+	text-align: center;
+	border-left: 1px solid black;
+	border-right: 0px;
+}
 
-		table tr td.id{
-			text-align: center;
-			border-left: 1px solid gray;
-		}
+.table tr td.valor{
+	text-align: right;
+	border-right: 1px solid black;
+}
 
-		.table tr td.valor{
-			text-align: right;
-		}
+th{
+	vertical-align: middle;
+	padding: 5px;
+}
 
-		th{
-			vertical-align: middle;
-			padding: 5px;
-		}
+table tfoot td.tfoot{
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black
+}
 
-		table tfoot td.tfoot{
-			border-left: 1px solid gray;
-			border-bottom: 1px solid gray
-		}
+div.firma{
+	text-align: right;
+	border-color: black;
+	border-top: 1px;
+}
 
-		div.firma{
-			text-align: right;
-			border-color: black;
-			border-top: 1px;
-		}
-
-		div.logo{
-			float: right;
-			text-align: right;
-		}
+div.logo{
+	float: right;
+	text-align: right;
+}
 h1{
 	text-transform: uppercase;
-	font-style: italic;
 	text-align: center;
+}
+
+div.headerContent table tr{
+	vertical-align: text-top;
+	vertical-align: top;
+	/*border-bottom: 1px solid black;*/
+}
+
+div.footerContent{
+	text-align: right;
+}
+
+table{
+	border-right: 0px;
 }

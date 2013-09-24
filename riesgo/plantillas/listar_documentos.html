@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos | Manuales y documentos{% endblock titulo%}
+
+{% block container %}
+
+	<h3>Lista de Documentos</h3>
+	<table class="table table-bordered table-hover">
+		<tbody>
+			{% for docu in documentos %}
+				<tr>
+					<th>{{docu.titulo | upper}} <a title="descargar el documento" href="/media/{{docu.docu_path}}"><i class="icon-download-alt"></i></a></th>
+				</tr>
+				<tr>
+					<td>
+						{{docu.descripcion}}
+						<p style="text-align:right;"><a href="/media/{{docu.docu_path}}" class="btn btn-primary"><i class="icon-download-alt"></i> Bajar el documento</a></p>
+					</td>
+				</tr>
+			{% empty %}
+				<tr>
+					<td colspan="5">no hay resoluciones para mostrar</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock container %}

@@ -1,7 +1,8 @@
 # Create your views here.
-from auditoria.models import HojaControl, Variable, Resultado
-from auditoria.form import ResultadoForm, LoginForm
+from auditoria.models import HojaControl, Variable, Resultado, Pac, Resolucion, Documentos
+from auditoria.form import ResultadoForm, LoginForm, HojaControlForm, IdentificadorForm, CaracterForm, ModlidadForm, PacForm, ResolucionForm, DocumentosForm
 from django.shortcuts import render_to_response
+from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
@@ -13,10 +14,16 @@ import cStringIO as StringIO
 import cgi, re, MySQLdb
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
+from django.core import serializers
+from dajaxice.utils import deserialize_form
+from dajaxice.decorators import dajaxice_register
 
 @login_required(login_url='/login')
 def mostrar_encuestas(request):
-	hoja = HojaControl.objects.filter(activa='activo')
+	if request.user.is_superuser:
+		hoja = HojaControl.objects.filter(activa='activo')
+	else:
+		hoja = HojaControl.objects.filter(activa='activo' , usuario=request.user.id)
 	return render_to_response('mostrar_encuestas.html', {'hoja':hoja}, context_instance=RequestContext(request) )
 
 @login_required(login_url='/login')
@@ -27,33 +34,40 @@ def mostrar_informes(request):
 @login_required(login_url='/login')
 def ver_hoja(request, encuesta_id):
 	hojas = HojaControl.objects.filter(id=encuesta_id, activa='Inactivo')
+	pac = Pac.objects.get(hojacontrol=hojas)
 	variables = Resultado.objects.filter(hoja_id=encuesta_id)
-	ctx = {'hojas': hojas, 'variables':variables }
+	ctx = {'hojas': hojas, 'variables':variables, 'pac': pac }
 	return render_to_response('hoja_informe.html', ctx, context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
 def add_hoja(request, encuesta_id):
-	hojas = HojaControl.objects.filter(id=encuesta_id)
-	variables = Resultado.objects.filter(hoja_id=encuesta_id)
-	observacion = {}
-	if request.method == 'POST':
-		formulario = []
-		for key in request.POST.iterkeys():
-			valuelist = request.POST.getlist(key)
-			valuelist.sort()
-			formulario.extend(['%s=%s' % (key, val) for val in valuelist])
-			if re.match("[0-9999]+observacion", key) and key != 'csrfmiddlewaretoken':
-				a = key.split('observacion')
-				resultados_observacion(encuesta_id, a[0], val)
-			elif key != 'csrfmiddlewaretoken' and key != 'enviar-mark':
-				resultado_update(encuesta_id, key, val)
-			if key == 'enviar-mark' and val == 'on':
-				desactivar_hoja(request, encuesta_id)
-		return render_to_response('datos.html', { 'formulario': formulario, 'observacion':observacion}, context_instance=RequestContext(request))
+	hojas = HojaControl.objects.get(id=encuesta_id)
+	template = 'add_hoja.html'
+	if request.user.is_superuser or hojas.usuario.id == request.user.id:
+		hojas = HojaControl.objects.filter(id=encuesta_id)
+		variables = Resultado.objects.filter(hoja_id=encuesta_id)
+		observacion = {}
+		if request.method == 'POST':
+			formulario = []
+			for key in request.POST.iterkeys():
+				valuelist = request.POST.getlist(key)
+				valuelist.sort()
+				formulario.extend(['%s=%s' % (key, val) for val in valuelist])
+				if re.match("[0-9999]+observacion", key) and key != 'csrfmiddlewaretoken':
+					a = key.split('observacion')
+					resultados_observacion(encuesta_id, a[0], val)
+				elif key != 'csrfmiddlewaretoken' and key != 'enviar-mark':
+					resultado_update(encuesta_id, key, val)
+				if key == 'enviar-mark' and val == 'on':
+					desactivar_hoja(request, encuesta_id)
+			return render_to_response('datos.html', { 'formulario': formulario, 'observacion':observacion}, context_instance=RequestContext(request))
+		else:
+			formulario = ResultadoForm()
+		ctx = {'hojas': hojas, 'variables':variables, 'formulario': formulario}
 	else:
-		formulario = ResultadoForm()
-	ctx = {'hojas': hojas, 'variables':variables, 'formulario': formulario}
-	return render_to_response('add_hoja.html', ctx, context_instance=RequestContext(request))
+		template = 'no-user.html'
+		ctx = {}
+	return render_to_response(template, ctx, context_instance=RequestContext(request))
 
 def resultado_update(hoja_id, variable, valores):
 		resultados = Resultado.objects.get(hoja = hoja_id, variable = variable)
@@ -134,8 +148,96 @@ def total_variable(hoja_id):
 	con = connection.cursor()
 	con.execute(sql)
 	res['puntos_totales'] = con.fetchone()
-	sql = 'SELECT ((SELECT sum(valor) FROM auditoria_resultado where hoja_id =1)*100/sum(valor)) as porcentaje FROM 	auditoria_variable a inner join auditoria_hojacontrol_variables hj on hj.variable_id = a.id and hj.hojacontrol_id ='+hoja_id
+	sql = 'SELECT ((SELECT sum(valor) FROM auditoria_resultado where hoja_id ='+hoja_id+')*100/sum(valor)) as porcentaje FROM 	auditoria_variable a inner join auditoria_hojacontrol_variables hj on hj.variable_id = a.id and hj.hojacontrol_id ='+hoja_id
 	con = connection.cursor()
 	con.execute(sql)
 	res['porcentje'] = con.fetchone()
 	return res
+
+#def obtener_pac(request):
+#	if request.POST:
+#		resolucion_id = request.POST.get('resolucion_id')
+#		resolucion = Resolucion.objects.get(id = int(resolucion_id))
+#		pacs = Pac.objects.filter(resolucion = resolucion)
+#		data = serializers.serialize("json", pacs, fields=('id', 'descripcion'))
+#	return HttpResponse(data, mimetype="application/javascript")
+
+@dajaxice_register
+def send_pac(request, form):
+	dajax = Dajax(form = HojaControlForm(deserialize_form(form)))
+	if form.is_valid():
+		dajax.alert('ando')
+	return dajax.json()
+
+
+@login_required(login_url='/login')
+def add_hoja_control(request):
+	if request.method == 'POST':
+		formulario = HojaControlForm(request.POST)
+		#datos = obtener_pac(request)
+		if(formulario.is_valid()):
+			formulario.save()
+			return HttpResponseRedirect('/hoja')
+	else:
+		formulario = HojaControlForm()
+	return render_to_response('add_hoja_control.html', {'formulario': formulario}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def add_identificador(request):
+	if request.method == 'POST':
+		formulario = IdentificadorForm(request.POST)
+		if(formulario.is_valid()):
+			formulario.save()
+			return HttpResponseRedirect('/hoja')
+	else:
+		formulario = IdentificadorForm()
+	return render_to_response('add_identificador.html', {'formulario': formulario}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def add_caracter(request):
+	if request.method == 'POST':
+		formulario = CaracterForm(request.POST)
+		if(formulario.is_valid()):
+			formulario.save()
+			return HttpResponseRedirect('/hoja')
+	else:
+		formulario = CaracterForm()
+	return render_to_response('add_caracter.html', {'formulario': formulario}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def add_pac(request):
+	if request.method == 'POST':
+		formulario = PacForm(request.POST)
+		if(formulario.is_valid()):
+			formulario.save()
+			return HttpResponseRedirect('/resolucion')
+	else:
+		formulario = PacForm()
+	return render_to_response('add_pac.html', {'formulario': formulario}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def add_resolucion(request):
+	if request.method == 'POST':
+		formulario = ResolucionForm(request.POST)
+		if(formulario.is_valid()):
+			formulario.save()
+			return HttpResponseRedirect('/resolucion')
+	else:
+		formulario = ResolucionForm()
+	return render_to_response('add_resolucion.html', {'formulario': formulario}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def mostrar_resoluciones(request):
+	resolucion = Resolucion.objects.all()
+	return render_to_response('listar_resoluciones.html', {'resolucion':resolucion}, context_instance=RequestContext(request) )
+
+@login_required(login_url='/login')
+def mostrar_pacs(request, resolucion_id):
+	pac = Pac.objects.filter(resolucion_id = resolucion_id).order_by('numero')
+	resolucion = Resolucion.objects.filter(id = resolucion_id)
+	return render_to_response('listar_pac.html', {'pac': pac, 'resolucion': resolucion}, context_instance=RequestContext(request))
+
+@login_required(login_url='/login')
+def mostrar_documentos(request):
+	documentos = Documentos.objects.all()
+	return render_to_response('listar_documentos.html', {'documentos':documentos}, context_instance=RequestContext(request) )

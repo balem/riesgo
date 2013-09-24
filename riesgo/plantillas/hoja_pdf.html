@@ -3,44 +3,97 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<link href='http://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="http://192.168.1.180:8000/static/css/hoja-informe.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/static/css/hoja-informe.css">
 </head>    
 <body>
     <header id="headerContent">
-        <h1 style="text-transform: uppercase; font-family: 'Book Antiqua'; tex">
-            REPÚBLICA DEL PARAGUAY<br>
-            CORTE SUPREMA DE JUSTICIA<br>
-            Dirección de Contraloría Interna<br>
-        </h1>
-        <h2>
-            Deparamente de control de la Gestión Administrativa
-        </h2>
-        
+        <table>
+            <tr>
+                <td style="text-align:center;">
+                    <img src="http://localhost/static/img/bandera.gif"/>
+                </td>
+                <td style="width:40%; ">
+                    <h1 style="text-transform: uppercase; font-family: 'Book Antiqua'; ">
+                        <span style="font-size: 11pt; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-style: italic;">
+                            REPÚBLICA DEL PARAGUAY
+                        </span><br>
+                        <span style="font-size: 12pt; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;">
+                            CORTE SUPREMA DE JUSTICIA
+                        </span><br>
+                        <span style="font-size: 11pt; font-style: normal; font-family: arial;">
+                        Dirección de Contraloría Interna<br>
+                        <span style="font-size: 12pt; font-style: normal; font-family: arial;">Deparamente de control de la Gestión Administrativa</span>
+                    </h1>
+                </td>
+                <td style="text-align:center;">
+                    <img src="http://localhost/static/img/Corte-CSJ.gif"/>
+                </td>
+            </tr>
+        </table>
+        <hr>
     </header>
     <section>
-        <p>
-        	<strong>Descripcion: </strong>{{ hojas.descripcion }}
-        </p>
-        <p>
-        	<strong>Fecha de publicación: </strong>{{ hojas.fecha_public}}
-        </p>
-        <p>
-        	<strong>Circuito: </strong>{{ hojas.circuito}}
-        </p>
-        <p>
-        	<strong>Circunscripción: </strong>{{ hojas.circunscripcion}}
-        </p>
-        </p>
-        <p>
-        	<strong>Área: </strong>{{ hojas.area}}
-        </p>
-        <table class="table table-bordered table-hover" style="padding: 2em;">
+        <table>
+                <tr>
+                    <td>
+                        <strong>Fecha de publicación: </strong>
+                        {{ hojas.fecha_public}}
+                    </td>
+                    <td style="text-align: right;">
+                        <strong>Nro.: </strong>
+                        {{ hojas.id }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Descripcion: </strong>
+                        {{ hojas.descripcion }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Área: </strong>
+                        {{ hojas.area}}
+                    </td>
+                    <td style="text-align:right;">
+                        <strong>Circunscripción: </strong>
+                        {{ hojas.circunscripcion}}
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Circuitos: </strong>
+                        <ul>
+                            <blockquote>
+                            {% for cir in hojas.circuito.all %}
+                                    <li>{{ cir.descripcion }}</li>    
+                            {% endfor %}
+                            </blockquote>
+                        </ul>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>PAC: </strong>
+                        {{ hojas.pac.numero }} {{ hojas.pac.descripcion }}
+                    </td>
+                    <td style="text-align:right; vertical-align: top;">
+                        <strong>Ejercicio: </strong>
+                        {{ hojas.pac.resolucion.ejercicio }}
+                    </td>
+                </tr>
+        </table>    
+           
+        <table class="table">
         	<thead>
         		<tr>
         			<th style="width:8%">#</th>
         			<th>variable</th>
         			<th>Observación</th>
-        			<th style="width:8%">valor</th>
+        			<th style="width:8%">Valor</th>
         		</tr>
         	</thead>
         	<tbody>
@@ -56,32 +109,34 @@
         	<tfoot>
         		<tr>
         			<td class="tfoot" colspan="4">
-        				<p><strong>Puntos Obtenidos: </strong>{{ resultado.puntos_otenidos }}</p>
+        				<p><strong>Puntos de riesgo calificados: </strong>{{ resultado.puntos_otenidos }}</p>
         			</td>
         		</tr>
         		<tr>
         			<td class="tfoot" colspan="4">
-        				<p><strong>Total de puntos: </strong>{{ resultado.puntos_totales }}</p>
+        				<p><strong>Puntos de riesgo obtenido: </strong>{{ resultado.puntos_totales }}</p>
         			</td>
         		</tr>
         		<tr>
         			<td class="tfoot" colspan="4">
-        				<p><strong>Porcentaje: </strong>{{ resultado.porcentje }}</p>
+        				<p><strong>Porcentaje de riesgo: </strong>{{ resultado.porcentje }}</p>
         			</td>
         		</tr>
+                <tr style="border:0px;">
+                    <td style="border:0px; text-align: right;" colspan="4">
+                        <span style="text-align: right;" >
+                            <br>
+                            {{ hojas.usuario.first_name }} {{ hojas.usuario.last_name }}
+                        </span>
+                    </td>
+                </tr>
         	</tfoot>
         </table>
-        <div class="firma">
-
-        	<br><br><br><br>
-        	<span >
-        		{{ hojas.usuario.first_name }} {{ hojas.usuario.last_name }}
-        	</span>
-        </div>
+        
 
         </section>
-        <div id="footerContent" style="border: 1px solid gray;">
-               Pie de página <pdf:pagenumber>
+        <div id="footerContent" style="text-align: right;">
+               <span>página <pdf:pagenumber></span>
         </div>
 </body>
 </html>

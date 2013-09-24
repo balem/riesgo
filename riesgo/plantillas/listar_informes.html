@@ -3,13 +3,13 @@
 
 {% block container %}
 
-	<h3>Lista de Hojas de control procesadas</h3>
+	<h3>Informe de control procesados</h3>
 	<table class="table table-bordered table-hover">
 		<thead>
 			<tr>
 				<th>#</th>
 				<th>Descripción</th>
-				<th>Circuito</th>
+				<th>Circuitos</th>
 				<th>Circunscripción</th>
 				<th>Área</th>
 				<th>Fecha de publición</th>
@@ -20,7 +20,13 @@
 			<tr>
 				<td>{{ hoja.id }}</td>
 				<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
-				<td>{{ hoja.circuito }}</td>
+				<td>
+					<ul>
+						{% for cir in hoja.circuito.all %}
+						<li>{{ cir.descripcion }}</li>
+						{% endfor %}
+					</ul>
+				</td>
 				<td>{{ hoja.circunscripcion }}</td>
 				<td>{{ hoja.area }}</td>
 				<td>{{ hoja.fecha_public }}</td>

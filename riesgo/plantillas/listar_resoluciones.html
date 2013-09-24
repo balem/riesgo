@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos | Lista de Resoluciones{% endblock titulo%}
+
+{% block container %}
+
+	<h3>Lista de Resoluciones</h3>
+	<p style="text-align: right;">
+		<a href="/resolucion/add/" class="btn" title="Haga Clic para añadir una resolución">
+			<i class="icon-plus"></i>
+			Añadir resoluciones
+		</a>
+	</p>
+	<table class="table table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>Nro.</th>
+				<th>Descripción</th>
+				<th>Fecha</th>
+				<th>Ejercicio</th>
+				<th>PAC's</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for resolucion in resolucion %}
+				<tr>
+					<td>{{resolucion.nro}}</td>
+					<td>{{resolucion.descripcion}}</td>
+					<td>{{resolucion.fecha}}</td>
+					<td>{{resolucion.ejercicio}}</td>
+					<td>
+						<a href="/resolucion/pac/{{ resolucion.id }}">
+							<i class="icon-th-list" title="Listar ítems de este pac"></i>
+						</a>
+						<a href="/resolucion/pac/add/">
+							<i class="icon-plus" title="Añadir ítems a este pac"></i>
+						</a>
+					</td>
+				</tr>
+			{% empty %}
+				<tr>
+					<td colspan="5">no hay resoluciones para mostrar</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock container %}

@@ -2,8 +2,11 @@
 {% block titulo%}Gestión de Riesgos{% endblock titulo%}
 <script src='{{ STATIC_URL }}js/check.js'></script>
 {% block container %}
-
 	<h3>Hojas de Control activas</h3>
+	<p style="text-align:right;">
+		<a class="btn" href="/hoja_control/add/"><i class=" icon-plus-sign"></i>Hoja de control</a>
+		<a class="btn" href="/hoja_control/identificador/"><i class=" icon-plus-sign"></i>Identificador</a>
+	</p>
 	<table class="table table-bordered table-hover">
 		<thead>
 			<tr>
@@ -22,7 +25,13 @@
 				<tr>
 					<td>{{ hoja.id }}</td>
 					<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
-					<td>{{ hoja.circuito }}</td>
+					<td>
+						<ul>
+						{% for circuito in hoja.circuito.all %}
+							<li>{{ circuito.descripcion }}</li>
+						{% endfor %}
+						</ul>
+					</td>
 					<td>{{ hoja.circunscripcion }}</td>
 					<td>{{ hoja.area }}</td>
 					<td>{{ hoja.fecha_public }}</td>
@@ -40,4 +49,9 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	<script type="text/javascript">
+		$(document).on('ready', function() {
+			('#id_circuito select').css('width', '500px');
+		});
+	</script>
 {% endblock container %}

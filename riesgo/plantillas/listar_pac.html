@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+
+{% block container %}
+
+	<h3>Ítems del PAC, resolución 
+		{% for resolucion in resolucion %}
+		{{ resolucion.nro }}</h3>
+
+		<p><strong>Descripción: </strong>{{resolucion.descripcion}}</p>
+		{% endfor %}
+
+<p style="text-align:right;">
+	<a href="/resolucion/pac/add/" class="btn">
+		 <i class='icon-plus-sign'></i>
+		Añadir PAC
+	</a>
+</p>
+
+	<table class="table table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>Nro.</th>
+				<th>Descripción</th>
+				<th>Caracter</th>
+				<th>Modalidad</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for pac in pac %}
+				<tr>
+					<td>{{pac.numero}}</td>
+					<td>{{pac.descripcion | upper }}</td>
+					<td>{{pac.caracter | upper}}</td>
+					<td>{{pac.Modlidad | upper}}</td>
+				</tr>
+			{% empty %}
+				<tr>
+					<td colspan="4">No hay ítems del pac para mostrar</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock container %}

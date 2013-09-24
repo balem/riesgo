@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo%}Añadir Resolución{% endblock titulo%}
+{% block container %}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<link rel="stylesheet" href="/static/css/datepicker.css">
+<style>
+	.errorlist{
+		background: #D9EDF7;
+	}
+</style>
+
+<h1>Añadir Resolución</h1>
+
+<form id='formulario' method='POST' action=''>
+	{% csrf_token %}
+	{{ formulario }}
+	<p><input type="submit" class="btn btn-primary" value="confirmar"></p>
+</form>
+
+<script>
+	$('#id_fecha').datepicker({format: 'dd/mm/yyyy'});
+	$(document).on("ready", function() {
+		$('#id_usuario').css('display', 'none');
+		$('#id_usuario').prev('label').css('display', 'none');
+		$('#id_activa').css('display', 'none');
+		$('#id_activa').prev('label').css('display', 'none');
+		$("#id_usuario option").each(function(){
+   			if($(this).text() == 'admin'){
+   				$(this).attr("selected", "selected");
+
+   			}else{
+   				$(this).removeAttr("selected");
+   			}
+		});
+
+		$("#id_activa option").each(function(){
+   			if($(this).text() == 'Activo'){
+   				$(this).attr("selected", "selected");
+
+   			}else{
+   				$(this).removeAttr("selected");
+   			}
+		});
+	});
+</script>
+{% endblock container %}

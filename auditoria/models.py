@@ -59,6 +59,48 @@ class Identificador(models.Model):
     def __unicode__(self):
         return self.descripcion
 
+ACCION_CHOICES=(
+    ('Creacion', 'Creacion'),
+    ('Modificacion', 'Modificacion'),
+)
+
+import datetime
+YEAR_CHOICES = []
+for r in range(1980, (datetime.datetime.now().year+1)):
+        YEAR_CHOICES.append((r,r))
+
+class Resolucion(models.Model):
+    """docstring for Resolucion"""
+    nro = models.IntegerField()
+    descripcion = models.TextField()
+    accion = models.CharField(max_length=15, choices= ACCION_CHOICES)
+    fecha = models.DateField()
+    ejercicio = models.IntegerField(max_length=4, choices=YEAR_CHOICES)
+    def __unicode__(self):
+        return self.descripcion
+
+class Caracter(models.Model):
+    """docstring for Caracter"""
+    descripcion = models.CharField(max_length=255L)
+    def __unicode__(self):
+        return self.descripcion
+
+class Modlidad(models.Model):
+    """docstring for Modlidad"""
+    descripcion = models.CharField(max_length=255L)
+    def __unicode__(self):
+        return self.descripcion
+
+class Pac(models.Model):
+    """docstring for Pac"""
+    numero = models.IntegerField()
+    descripcion = models.CharField(max_length=255L)
+    caracter = models.ForeignKey(Caracter)
+    Modlidad = models.ForeignKey(Modlidad)
+    resolucion = models.ForeignKey(Resolucion)
+    def __unicode__(self):
+        return self.descripcion
+
 ACTIVOS_CHOICES=(
     ('activo', 'Activo'),
     ('inactivo', 'Inactivo'),
@@ -70,9 +112,10 @@ class HojaControl(models.Model):
     descripcion = models.CharField(max_length=255L)
     fecha_public = models.DateField()
     activa = models.CharField(max_length=10, choices=ACTIVOS_CHOICES)
-    circuito = models.ForeignKey(Circuito, db_column='circuito')
+    circuito = models.ManyToManyField(Circuito, db_column='circuito', related_name='ciruito_hoja')
     circunscripcion = models.ForeignKey(Circunscripcion, db_column='circunscripcion')
     area = models.ForeignKey(Area, db_column='area')
+    pac = models.ForeignKey(Pac, db_column='pac')
     usuario = models.ForeignKey(User, db_column='usuario')
     #variables = models.ManyToManyField(Variables, through='EncuestasVariables')
     variables = models.ManyToManyField(Variable, verbose_name='Variables', related_name='hoja_variable')
@@ -85,3 +128,12 @@ class Resultado(models.Model):
     variable = models.ForeignKey(Variable)
     valor = models.FloatField()
     observacion = models.TextField()
+
+class Documentos(models.Model):
+    """docstring for Documentos"""
+    titulo = models.CharField(max_length=255L)
+    descripcion = models.TextField()
+    fecha_registro = models.DateTimeField(auto_now=True)
+    docu_path = models.FileField(upload_to='archivos', verbose_name='Documentos')
+    def __unicode__(self):
+        return self.titulo

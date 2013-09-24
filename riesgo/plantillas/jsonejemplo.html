@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+			<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<title>form ejemplo</title>
+			<link rel="stylesheet" href="">
+			<script>
+				function send_form(){
+    				riesgo.auditoria.send_form(Dajax.process,{'form':$('#formulario').serialize(true)});
+				}
+			</script>
+	</head>
+	<body>
+		<form action="" method="post" id="formulario">
+			{{ form.as_p }}
+		</form>
+	</body>
+</html>

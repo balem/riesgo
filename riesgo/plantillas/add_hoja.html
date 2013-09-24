@@ -10,7 +10,13 @@
 				<li><a href=""><span style="font-weight: bold;">Identificador:</span> {{ hoja.id }}</a></li>
 				<li><a href=""><span style="font-weight: bold;">Descripción:</span> {{ hoja.descripcion }}</a></li>
 				<li><a href=""><span style="font-weight: bold;">Fecha de publicación:</span> {{ hoja.fecha_public }}</a></li>
-				<li><a href=""><span style="font-weight: bold;">Circuito:</span> {{ hoja.circuito }}</a></li>
+				<li><a href=""><span style="font-weight: bold;">Circuito:</span> 
+					<ul>
+					{% for cir in hoja.circuito.all %}
+						<li>{{cir.descripcion}}</li>
+					{% endfor %}
+					</ul>
+				</a></li>
 				<li><a href=""><span style="font-weight: bold;">Circunscripción:</span> {{ hoja.circunscripcion }}</a></li>
 			{% endfor %}
 		</ul>
