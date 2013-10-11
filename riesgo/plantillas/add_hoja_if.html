@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos | Informe de control{% endblock titulo%}
+{% block container %}
+{% for hoja in hojas %}
+	<h3>{{hoja.descripcion}}</h3>
+	<p><i class=" icon-minus-sign"></i>Este informe de control ha sido procesado correctamente</p>
+{% endfor %}
+{% endblock %}

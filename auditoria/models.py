@@ -8,15 +8,7 @@
 # into your database.
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
-
 from django.db import models
-
-class Circuito(models.Model):
-    descripcion = models.CharField(max_length=255L)
-    valor = models.FloatField()
-    procesos = models.ForeignKey('Proceso', db_column='proceso')
-    def __unicode__(self):
-        return self.descripcion
 
 class Area(models.Model):
     """docstring for Areas"""
@@ -46,6 +38,13 @@ class Proceso(models.Model):
     def __unicode__(self):
         return self.descripcion
 
+
+class Identificador(models.Model):
+    """Esta entidad permitira asociar varias hojas de control"""
+    descripcion = models.CharField(max_length=255L, unique=True)
+    def __unicode__(self):
+        return self.descripcion
+
 class Variable(models.Model):
     descripcion = models.CharField(max_length=255L)
     valor = models.FloatField()
@@ -53,9 +52,11 @@ class Variable(models.Model):
     def __unicode__(self):
         return self.descripcion
 
-class Identificador(models.Model):
-    """Esta entidad permitira asociar varias hojas de control"""
-    descripcion = models.CharField(max_length=255L, unique=True)
+class Circuito(models.Model):
+    descripcion = models.CharField(max_length=255L)
+    valor = models.FloatField()
+    procesos = models.ForeignKey('Proceso', db_column='proceso')
+    variables = models.ManyToManyField(Variable, verbose_name='Variables', related_name='circuito_variable')
     def __unicode__(self):
         return self.descripcion
 
@@ -112,20 +113,20 @@ class HojaControl(models.Model):
     descripcion = models.CharField(max_length=255L)
     fecha_public = models.DateField()
     activa = models.CharField(max_length=10, choices=ACTIVOS_CHOICES)
-    circuito = models.ManyToManyField(Circuito, db_column='circuito', related_name='ciruito_hoja')
+    circuito = models.ForeignKey(Circuito, db_column='circuito')
     circunscripcion = models.ForeignKey(Circunscripcion, db_column='circunscripcion')
     area = models.ForeignKey(Area, db_column='area')
     pac = models.ForeignKey(Pac, db_column='pac')
     usuario = models.ForeignKey(User, db_column='usuario')
     #variables = models.ManyToManyField(Variables, through='EncuestasVariables')
-    variables = models.ManyToManyField(Variable, verbose_name='Variables', related_name='hoja_variable')
     def __unicode__(self):
         return self.descripcion
 
 class Resultado(models.Model):
     """docstring for Resultados"""
-    hoja = models.ForeignKey(HojaControl)
+    circuito = models.ForeignKey(Circuito)
     variable = models.ForeignKey(Variable)
+    hoja = models.ForeignKey(HojaControl)
     valor = models.FloatField()
     observacion = models.TextField()
 

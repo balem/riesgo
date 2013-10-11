@@ -47,3 +47,10 @@ class DocumentosForm(object):
 	"""docstring for DocumentosForm"""
 	class Meta:
 		model = Documentos
+
+class UserForm(ModelForm):
+    class Meta:
+        password = forms.CharField(widget=forms.PasswordInput)
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'password')
+        widgets = {'password': forms.PasswordInput(),}

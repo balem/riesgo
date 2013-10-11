@@ -16,6 +16,7 @@
         <script src='{{ STATIC_URL }}js/jquery-1.7.2.js'></script>
         <script src='{{ STATIC_URL }}js/vendor/bootstrap.js'></script>
         <script src='{{ STATIC_URL }}js/vendor/bootstrap.js'></script>
+        <script src='{{ STATIC_URL }}js/vendor/bootstrap-dropdown.js'></script>
         <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
         <style type="text/css">
             .label-info a:link,.label-info a:hover, .label-info a:visited{
@@ -43,17 +44,23 @@
                     <a class="brand" href="/">Gestión de Riesgos</a>
                     <div class="nav-collapse collapse">
                         <ul class="nav">
-                            <li class="active"><a href="#">Inicio</a></li>
+                            <li class="active"><a href="/">Inicio</a></li>
                             <li><a href="/documentos">Documentos</a></li>
-                            <li><a href="#contact">Contactos</a></li>
                         </ul>
                     </div><!--/.nav-collapse -->
 
                     <div class="nav-collapse ">
-                        <p class="navbar-text pull-right">
-                            Inició sesión como: 
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}</a>
-                        </p>
+                            <ul class="nav pull-right">
+                                <li class="dropdown open">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i> {{ user.username }}
+                                        <ul class="dropdown-menu" rol="menu">
+                                            <li>
+                                                Editar perfil
+                                            </li>
+                                        </ul>
+                                </li>
+                                </a>
+                            </ul>
                     </div>
 
                 </div>

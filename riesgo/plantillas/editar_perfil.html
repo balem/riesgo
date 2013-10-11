@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block titulo%}Editar usuario{% endblock titulo%}
+{% block container %}
+<form action="" method="post">
+	{% csrf_token %}
+	{{ user_form }}
+	<br>
+	<input class="btn btn-primary" type="submit" value="Guardar cambios">
+</form>
+{% endblock container%}

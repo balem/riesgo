@@ -1,5 +1,7 @@
 from auditoria.models import Circuito, HojaControl, Factor, Indicador, Proceso, Variable, Area, Circunscripcion, Resultado, Identificador, Resolucion, Caracter, Modlidad, Pac, Documentos
 from django.contrib import admin
+from django.db import models
+from django.forms import CheckboxSelectMultiple
 
 admin.site.register(HojaControl)
 admin.site.register(Circunscripcion)
@@ -16,10 +18,15 @@ class PacAdmin(admin.ModelAdmin):
 admin.site.register(Pac, PacAdmin)
 class ResultadoAdmin(admin.ModelAdmin):
 	"""docstring for ResultadoAdmin"""
-	list_display = ['hoja', 'variable', 'valor']
+	list_display = ['id', 'circuito']
+	
 admin.site.register(Resultado, ResultadoAdmin)
 class CircuitoAdmin(admin.ModelAdmin):
-    list_display = ['id', 'descripcion', 'procesos']
+	list_display = ['id', 'descripcion', 'procesos']
+	formfield_overrides = {
+    models.ManyToManyField: {'widget': CheckboxSelectMultiple},
+	}
+
 admin.site.register(Circuito, CircuitoAdmin)
 class IndicadorAdmin(admin.ModelAdmin):
     list_display = ['descripcion', 'factor']

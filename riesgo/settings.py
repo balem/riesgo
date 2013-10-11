@@ -29,6 +29,13 @@ ALLOWED_HOSTS = []
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+#Esto es para agregar los informes a django
+WKHTMLTOPDF_CMD = '/usr/bin/wkhtmltopdf'
+
+WKHTMLTOPDF_CMD_OPTIONS = {
+    'quiet': True,
+}
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -138,6 +145,7 @@ INSTALLED_APPS = (
     'django_evolution',
     'dajaxice',
     'dajax',
+    'wkhtmltopdf'
 )
 
 # A sample logging configuration. The only tangible logging

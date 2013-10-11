@@ -20,13 +20,7 @@
 			<tr>
 				<td>{{ hoja.id }}</td>
 				<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
-				<td>
-					<ul>
-						{% for cir in hoja.circuito.all %}
-						<li>{{ cir.descripcion }}</li>
-						{% endfor %}
-					</ul>
-				</td>
+				<td>{{ hoja.circuito }}</td>
 				<td>{{ hoja.circunscripcion }}</td>
 				<td>{{ hoja.area }}</td>
 				<td>{{ hoja.fecha_public }}</td>

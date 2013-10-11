@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block container %}
+<script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.js"></script>
+<link rel="stylesheet" href="/static/css/datepicker.css">
+<h1>PAC</h1>
+
+<form id='formulario' method='POST' action=''>
+	{% csrf_token %}
+	{{ formulario }}
+	<p><input type="submit" class="btn btn-primary" value="confirmar"></p>
+</form>
+{% endblock container %}

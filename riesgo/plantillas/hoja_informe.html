@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block titulo%}Informe de Riesgos{% endblock titulo%}
-{% block navbar %}{% endblock navbar%}
+
 {% block navleft %}
+<br>
+<br>
 <h1>Informe Hoja de Control</h1>
 	<div class="span2 bs-docs-sidebar">
 		<ul class="nav nav-tabs nav-stacked">
@@ -27,15 +29,14 @@
 		</thead>
 		<tbody>
 	{% for hoja in hojas%}
-		{% for variable in hoja.variables.all %}
+		{% for variable in hoja.circuito.variables.all %}
 			<tr>
 				<td> {{ variable.id }} </td>
 				<td><span class='variable'>{{ variable.descripcion }}</span></td>
 				<td>{{variable.indicador}}</td>
 				<td>
 					{% for variable_otro in variables.all %}
-						
-							{% if variable.id == variable_otro.variable_id and hoja.id == variable_otro.hoja_id 	%}
+							{% if variable.id == variable_otro.variable_id and hoja.id == variable_otro.hoja_id %}
 								<span class=''>
 									{{ variable_otro.valor }}
 								</span>
