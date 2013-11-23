@@ -19,7 +19,7 @@
 			{% for hoja in hoja %}
 			<tr>
 				<td>{{ hoja.id }}</td>
-				<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
+				<td><a href="/informe/{{ hoja.id }}">{{hoja.descripcion}}</a></td>
 				<td>{{ hoja.circuito }}</td>
 				<td>{{ hoja.circunscripcion }}</td>
 				<td>{{ hoja.area }}</td>
@@ -30,4 +30,23 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if hoja %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li>
+                	<a href="/informes/1"> ← </a></li>
+                {% if hoja.has_previous %}
+                    <li><a href="/informes/{{ hoja.previous_page_number }}/"> Anterior </a></li>
+                    {% if hoja.has_next %}
+                    	<li><a href="/informes/{{ hoja.next_page_number }}/"> Siguiente </a></li>
+                    {% endif %}
+                {% elif hoja.has_next %}
+                    <li><a href="/informes/{{ hoja.next_page_number }}/"> Siguiente </a></li>
+                {% endif %}
+                <li><a href="/informes/{{ hoja.paginator.num_pages }}"> → </a></li>
+            </ul>
+        </div>
+            <h4 align="center"> Página {{ hoja.number }} de {{ hoja.paginator.num_pages }}</h4>        
+    {% endif %}
+
 {% endblock container %}

@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-{% block titulo%}Gestión de Riesgos{% endblock titulo%}
+{% block titulo%}Lista de hoja de control{% endblock titulo%}
 <script src='{{ STATIC_URL }}js/check.js'></script>
 {% block container %}
 	<h3>Hojas de Control activas</h3>
 	<p style="text-align:right;">
 		<a class="btn" href="/hoja_control/add/"><i class=" icon-plus-sign"></i>Hoja de control</a>
-		<a class="btn" href="/hoja_control/identificador/"><i class=" icon-plus-sign"></i>Identificador</a>
 	</p>
 	<table class="table table-bordered table-hover">
 		<thead>
@@ -24,13 +23,9 @@
 				{% if hoja.usuario == username or username == admin %}
 				<tr>
 					<td>{{ hoja.id }}</td>
-					<td><a href="{{ hoja.id }}">{{hoja.descripcion}}</a></td>
+					<td><a href="/hoja_proceso/{{ hoja.id }}">{{hoja.descripcion}}</a></td>
 					<td>
-						<ul>
-						{% for circuito in hoja.circuito.all %}
-							<li>{{ circuito.descripcion }}</li>
-						{% endfor %}
-						</ul>
+						{{ hoja.circuito }}
 					</td>
 					<td>{{ hoja.circunscripcion }}</td>
 					<td>{{ hoja.area }}</td>
@@ -40,18 +35,38 @@
 				{% else %}
 					<tr>
 						<td colspan="7" style='color:red;'>
-							Todavía no se registraron las Encuestas o no estan activas
+							Todavía no se registraron las hojas de control o no estan activas
 						</td>
 					</tr>
 				{% endif %}
 			{% empty %}
-				<td colspan="7" style='color:red;'>Todavía no se registraron las Encuestas o no estan activas</td>
+				<td colspan="7" style='color:red;'>Todavía no se registraron las hojas de control o no estan activas</td>
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if hoja %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li>
+                	<a href="/hoja/1"> ← </a></li>
+                {% if hoja.has_previous %}
+                    <li><a href="/hoja/{{ hoja.previous_page_number }}/"> Anterior </a></li>
+                    {% if hoja.has_next %}
+                    	<li><a href="/hoja/{{ hoja.next_page_number }}/"> Siguiente </a></li>
+                    {% endif %}
+                {% elif hoja.has_next %}
+                    <li><a href="/hoja/{{ hoja.next_page_number }}/"> Siguiente </a></li>
+                {% endif %}
+                <li><a href="/hoja/{{ hoja.paginator.num_pages }}"> → </a></li>
+            </ul>
+        </div>
+            <h4 align="center"> Página {{ hoja.number }} de {{ hoja.paginator.num_pages }}</h4>        
+    {% endif %}
+
 	<script type="text/javascript">
 		$(document).on('ready', function() {
 			('#id_circuito select').css('width', '500px');
 		});
 	</script>
+
 {% endblock container %}

@@ -41,4 +41,25 @@
 			{% endfor %}
 		</tbody>
 	</table>
+	{% if pac %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li>
+       			{% for resolucion in resolucion %}
+	                	<a href="/resolucion/pac/{{ resolucion.id }}/1"> ← </a></li>
+	                {% if pac.has_previous %}
+	                    <li><a href="/resolucion/pac/{{ resolucion.id }}/{{ pac.previous_page_number }}/"> Anterior </a></li>
+	                    {% if pac.has_next %}
+	                    	<li><a href="/resolucion/pac/{{ resolucion.id }}/{{ pac.next_page_number }}/"> Siguiente </a></li>
+	                    {% endif %}
+	                {% elif pac.has_next %}
+	                    <li><a href="/resolucion/pac/{{ resolucion.id }}/{{ pac.next_page_number }}/"> Siguiente </a></li>
+	                {% endif %}
+	                <li><a href="/resolucion/pac/{{ resolucion.id }}/{{ pac.paginator.num_pages }}"> → </a></li>
+	            {% endfor %}
+            </ul>
+        </div>
+            <h4 align="center"> Página {{ pac.number }} de {{ pac.paginator.num_pages }}</h4>
+        
+    {% endif %}
 {% endblock container %}

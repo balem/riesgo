@@ -18,18 +18,40 @@ from django.core import serializers
 from dajaxice.utils import deserialize_form
 from dajaxice.decorators import dajaxice_register
 from wkhtmltopdf.views import PDFTemplateResponse
+# Paginacion en DJANGO
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
 @login_required(login_url='/login')
-def mostrar_encuestas(request):
+def mostrar_encuestas(request, pagina):
 	if request.user.is_superuser:
-		hoja = HojaControl.objects.filter(activa='activo')
+		list_hojas = HojaControl.objects.filter(activa='activo')
 	else:
-		hoja = HojaControl.objects.filter(activa='activo' , usuario=request.user.id)
+		lits_hojas = HojaControl.objects.filter(activa='activo' , usuario=request.user.id)
+	paginator = Paginator(list_hojas,5)
+	try:
+		page = int(pagina)
+	except:
+		page = 1
+	try:
+		hoja = paginator.page(page)
+	except (EmptyPage, InvalidPage):
+		hoja = paginator.page(paginator.num_pages)
+	
 	return render_to_response('mostrar_encuestas.html', {'hoja':hoja}, context_instance=RequestContext(request) )
 
 @login_required(login_url='/login')
-def mostrar_informes(request):
-	hoja = HojaControl.objects.filter(activa= 'Inactivo')
+def mostrar_informes(request, pagina):
+	list_hojas = HojaControl.objects.filter(activa= 'Inactivo').order_by('-id')
+	paginator = Paginator(list_hojas, 5)
+	try:
+		page = int(pagina)
+	except:
+		page = 1
+	try:
+		hoja = paginator.page(page)
+	except (EmptyPage, InvalidPage):
+		hoja = paginator.page(paginator.num_pages)
+	
 	return render_to_response('listar_informes.html', {'hoja':hoja}, context_instance=RequestContext(request) )
 
 @login_required(login_url='/login')
@@ -49,7 +71,7 @@ def add_hoja(request, encuesta_id):
 	resultados_nuevo(hojas.id, circuito_id)
 	if request.user.is_superuser or hojas.usuario.id == request.user.id:
 		hojas = HojaControl.objects.filter(id=encuesta_id)
-		variables = Resultado.objects.filter(circuito_id=circuito_id)
+		variables = Resultado.objects.filter(circuito_id=circuito_id).order_by('variable__descripcion')
 		observacion = {}
 		if request.method == 'POST':
 			formulario = []
@@ -142,6 +164,18 @@ def hoja_pdf(request, id):
     return generar_pdf(html)
 
 @login_required(login_url='/login')
+def reporte_pdf(request, id):
+	factores = Factor.objects.all()
+	indic = []
+	i = 0
+	for fac in factores:
+		indic[i] = total_idicador(id,fac.indicador.descripcion, fac.descripcion)
+		i = i+1
+	hoja=get_object_or_404(HojaControl, id=id)
+	html = render_to_string('resultodos_informes_pdf.html', {'pagesize':'A4', 'hoja':hoja, 'factores':factores, 'indicadores':indic}, context_instance=RequestContext(request))
+	return generar_pdf(html)
+
+@login_required(login_url='/login')
 def base(request):
 	ctx = {}
 	return render_to_response('base.html', ctx, context_instance=RequestContext(request))
@@ -150,11 +184,11 @@ def base(request):
 def ver_hoja_pdf(request, id):
 	hojas = get_object_or_404(HojaControl, id=id)
 	circuito = HojaControl.objects.get(id=id).circuito.id
-	variables = Resultado.objects.filter(circuito_id=circuito)
+	variables = Resultado.objects.filter(circuito_id=circuito, hoja_id= id)
 	obt = total_variable(id)
 	resultado = {}
-	resultado = total_variable(circuito)
-	ctx = {'hojas': hojas, 'variables':variables, 'pagesize':'A4', 'resultado':resultado }
+	resultado = total_variable(id)
+	ctx = {'hojas': hojas, 'variables':variables, 'pagesize':'A4', 'resultado':resultado, circuito: 'circuito' }
 	html = render_to_string('hoja_pdf.html', ctx, context_instance=RequestContext(request))
 	return generar_pdf(html)
 
@@ -172,15 +206,32 @@ def total_variable(hoja_id):
 	con = connection.cursor()
 	con.execute(sql)
 	res['porcentje'] = con.fetchone()
+	porcentaje = str(res['porcentje'])
+	porcentaje = porcentaje.replace('(','').replace(')','').replace(',', '')
+	porcentaje = float(porcentaje)
+	if porcentaje <= 20 :
+		res['nivel'] = 'Bajo'
+	elif porcentaje <= 59:
+		res['nivel'] = 'Medio'
+	else:
+		res['nivel'] = 'Alto'
 	return res
 
-#def obtener_pac(request):
-#	if request.POST:
-#		resolucion_id = request.POST.get('resolucion_id')
-#		resolucion = Resolucion.objects.get(id = int(resolucion_id))
-#		pacs = Pac.objects.filter(resolucion = resolucion)
-#		data = serializers.serialize("json", pacs, fields=('id', 'descripcion'))
-#	return HttpResponse(data, mimetype="application/javascript")
+def total_idicador(hoja_id, indicador):
+	res = {}
+	sql = "SELECT sum(valor_obtenido) FROM vresultados where hoja_id= 24 and indicador like \'%"+indicador+"%\'"
+	con = connection.cursor()
+	con.execute(sql)
+	res['indicador'] = con.fetchone()
+	return res
+
+def total_factor(hoja_id, factor):
+	res = {}
+	sql = "SELECT sum(valor_obtenido) FROM vresultados where hoja_id= 24 and indicador like \'%"+indicador+"%\'"
+	con = connection.cursor()
+	con.execute(sql)
+	res['factor'] = con.fetchone()
+	return res
 
 @dajaxice_register
 def send_pac(request, form):
@@ -197,7 +248,7 @@ def add_hoja_control(request):
 		#datos = obtener_pac(request)
 		if(formulario.is_valid()):
 			formulario.save()
-			return HttpResponseRedirect('/hoja')
+			return HttpResponseRedirect('/hoja/1')
 	else:
 		formulario = HojaControlForm()
 	return render_to_response('add_hoja_control.html', {'formulario': formulario}, context_instance=RequestContext(request))
@@ -252,9 +303,19 @@ def mostrar_resoluciones(request):
 	return render_to_response('listar_resoluciones.html', {'resolucion':resolucion}, context_instance=RequestContext(request) )
 
 @login_required(login_url='/login')
-def mostrar_pacs(request, resolucion_id):
-	pac = Pac.objects.filter(resolucion_id = resolucion_id).order_by('numero')
+def mostrar_pacs(request, resolucion_id, pagina):
+	list_pac = Pac.objects.filter(resolucion_id = resolucion_id).order_by('numero')
 	resolucion = Resolucion.objects.filter(id = resolucion_id)
+	paginator = Paginator(list_pac, 5)
+	try:
+		page = int(pagina)
+	except :
+		page = 1
+	try:
+		pac = paginator.page(page)
+	except(EmptyPage, InvalidPage):
+		pac = paginator.page(paginator.num_pages)
+
 	return render_to_response('listar_pac.html', {'pac': pac, 'resolucion': resolucion}, context_instance=RequestContext(request))
 
 @login_required(login_url='/login')
@@ -279,3 +340,19 @@ def editar_perfil(request):
 		# formulario inicial
 		user_form = UserForm(instance=request.user)
 	return render_to_response('editar_perfil.html', { 'user_form': user_form}, context_instance=RequestContext(request))
+
+def buscar(request):
+	if request.method == 'GET' or not request.POST.__contains__('start'):
+		return HttpResponseForbidden()
+ 
+    # Hacemos la consulta para aquellos elementos que empiecen por start ordenados por nombre
+	query = Pac.objects.filter(descripcion__istartswith=request.POST['start']).order_by('descripcion')
+ 
+	# Serializamos
+	#objects = u'{items: [\n'
+	objects='['
+	for i in query:
+		objects += u'"%s",' % (i.descripcion.replace('"',''))
+	objects=objects.strip(",\n");
+	objects+=u']'
+	return HttpResponse(objects,mimetype="text/plain")

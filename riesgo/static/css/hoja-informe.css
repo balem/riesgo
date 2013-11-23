@@ -95,3 +95,15 @@ div.footerContent{
 table{
 	border-right: 0px;
 }
+
+.Bajo{
+	background: yellow;
+}
+
+p .medio{
+	background: orange;
+}
+
+p .alto{
+	background: red;
+}

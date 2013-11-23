@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 <script type="text/javascript" src=""></script>
 {% block titulo%}Gestión de Riesgos{% endblock titulo%}
-{% block navbar %}{% endblock navbar%}
 {% block navleft %}
 {% for hoja in hojas %}
 	{% if hoja.activa != 'Inactivo' %}
+	<br><br>
 		<h1>Gestión de Riesgo</h1>
 			<div class="span2 bs-docs-sidebar">
 				<ul class="nav nav-tabs nav-stacked">

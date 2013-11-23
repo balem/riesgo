@@ -50,7 +50,11 @@ class Variable(models.Model):
     valor = models.FloatField()
     indicador = models.ForeignKey(Indicador, db_column='indicador')
     def __unicode__(self):
-        return self.descripcion
+        #return self.descripcion
+        return "%s - %s" % (self.id,  self.descripcion)
+    class Meta:
+        ordering = ('indicador',)
+        
 
 class Circuito(models.Model):
     descripcion = models.CharField(max_length=255L)
@@ -99,8 +103,10 @@ class Pac(models.Model):
     caracter = models.ForeignKey(Caracter)
     Modlidad = models.ForeignKey(Modlidad)
     resolucion = models.ForeignKey(Resolucion)
+
     def __unicode__(self):
-        return self.descripcion
+        #return self.descripcion
+        return "%s - %s- %s" % (self.resolucion.nro, self.numero, self.descripcion)
 
 ACTIVOS_CHOICES=(
     ('activo', 'Activo'),
@@ -109,7 +115,6 @@ ACTIVOS_CHOICES=(
 
 class HojaControl(models.Model):
     """Hoja de control"""
-    identificador = models.ForeignKey(Identificador, db_column='identificador')
     descripcion = models.CharField(max_length=255L)
     fecha_public = models.DateField()
     activa = models.CharField(max_length=10, choices=ACTIVOS_CHOICES)
@@ -118,7 +123,6 @@ class HojaControl(models.Model):
     area = models.ForeignKey(Area, db_column='area')
     pac = models.ForeignKey(Pac, db_column='pac')
     usuario = models.ForeignKey(User, db_column='usuario')
-    #variables = models.ManyToManyField(Variables, through='EncuestasVariables')
     def __unicode__(self):
         return self.descripcion
 

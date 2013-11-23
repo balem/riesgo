@@ -13,6 +13,7 @@ class HojaControlForm(forms.ModelForm):
 		
 class ResultadoForm(forms.ModelForm):
 	class Meta:
+		ordering = ['--variables__indicador__id']
 		model = Resultado
 
 class IdentificadorForm(forms.ModelForm):

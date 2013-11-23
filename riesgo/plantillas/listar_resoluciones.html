@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block titulo%}Gestión de Riesgos | Lista de Resoluciones{% endblock titulo%}
+{% block titulo%}Lista de Resoluciones{% endblock titulo%}
 
 {% block container %}
 
@@ -35,7 +35,7 @@
 					<td>{{resolucion.fecha}}</td>
 					<td>{{resolucion.ejercicio}}</td>
 					<td>
-						<a href="/resolucion/pac/{{ resolucion.id }}">
+						<a href="/resolucion/pac/{{ resolucion.id }}/1">
 							<i class="icon-th-list" title="Listar ítems de este pac"></i>
 						</a>
 						<a href="/resolucion/pac/add/">
