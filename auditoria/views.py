@@ -15,9 +15,9 @@ import cgi, re, MySQLdb
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
 from django.core import serializers
-from dajaxice.utils import deserialize_form
-from dajaxice.decorators import dajaxice_register
-from wkhtmltopdf.views import PDFTemplateResponse
+#from dajaxice.utils import deserialize_form
+#from dajaxice.decorators import dajaxice_register
+#from wkhtmltopdf.views import PDFTemplateResponse
 # Paginacion en DJANGO
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
@@ -233,12 +233,12 @@ def total_factor(hoja_id, factor):
 	res['factor'] = con.fetchone()
 	return res
 
-@dajaxice_register
-def send_pac(request, form):
-	dajax = Dajax(form = HojaControlForm(deserialize_form(form)))
-	if form.is_valid():
-		dajax.alert('ando')
-	return dajax.json()
+#@dajaxice_register
+#def send_pac(request, form):
+#	dajax = Dajax(form = HojaControlForm(deserialize_form(form)))
+#	if form.is_valid():
+#		dajax.alert('ando')
+#	return dajax.json()
 
 
 @login_required(login_url='/login')
